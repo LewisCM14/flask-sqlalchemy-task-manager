@@ -69,3 +69,23 @@ def edit_category(category_id):
         db.session.commit()
         return redirect(url_for("categories"))
     return render_template("edit_category.html", category=category)
+
+
+@app.route("/delete_category/<int:category_id>")
+def delete_category(category_id):
+    """
+    First, we need to pass the category ID into our app route and function
+    Next, we should attempt to query the Category table using this ID,
+    and store it inside of a variable called 'category'.
+    If there isn't a matching record found,
+    then it should automatically return an error 404 page.
+    Then, using the database session, we need to perform the
+    .delete() method using that 'category' variable,
+    and then commit the session changes.
+    Finally, once that's been deleted and our session has been committed,
+    we simply redirect the user back to the function above called "categories".
+    """
+    category = Category.query.get_or_404(category_id)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for("categories"))
