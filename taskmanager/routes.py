@@ -19,9 +19,9 @@ def categories():
     this variable is passed into our rendered template,
     so that we can use this data to display everything to our users.
     By using the all() method, this is actually what's known as a Cursor Object
-    The first declaration of 'categories' is the variable name 
+    The first declaration of 'categories' is the variable name
     that we can now use within the HTML template.
-    The second 'categories', which is now a list(), 
+    The second 'categories', which is now a list(),
     is the variable defined within our function
     """
     categories = list(Category.query.order_by(Category.category_name).all())
@@ -43,3 +43,29 @@ def add_category():
         db.session.commit()
         return redirect(url_for("categories"))
     return render_template("add_category.html")
+
+
+@app.route("/edit_category/<int:category_id>", methods=["GET", "POST"])
+def edit_category(category_id):
+    """
+    we've given an argument of 'category_id' when clicking the 'Edit' button,
+    this also needs to appear in our app.route.
+    These types of variables being passed back into our Python functions
+    must be wrapped inside of angle-brackets within the URL.
+    We also need to pass the variable directly into the function as well,
+    so we have the value available to use within this function.
+    """
+    category = Category.query.get_or_404(category_id)
+    """
+    There's a SQLAlchemy method called '.get_or_404()',
+    which takes the argument of 'category_id'.
+    What this does is query the database
+    and attempts to find the specified record using the data
+    provided, and if no match is found,
+    it will trigger a 404 error page.
+    """
+    if request.method == "POST":
+        category.category_name = request.form.get("category_name")
+        db.session.commit()
+        return redirect(url_for("categories"))
+    return render_template("edit_category.html", category=category)
